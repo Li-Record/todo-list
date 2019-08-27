@@ -1,0 +1,16 @@
+.box-shadow {
+    box-shadow: 0 2px 5px #333;
+}
+
+.nav-link {
+    padding: 0rem 1rem;
+}
+
+::placeholder {
+    color: #e6e6e6 !important;
+
+}
+
+.line-through {
+    text-decoration: line-through;
+}

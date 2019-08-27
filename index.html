@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/all.css">
+    <title>todo list</title>
+</head>
+
+<body class="bg-light">
+    <!-- 列表放這 -->
+    <main class="container-fluid mt-3">
+        <article class="container">
+            <header>
+                <h1 class="text-center display-2 text-secondary">todos</h1>
+            </header>
+            <section>
+                <div class="card w-50 mx-auto box-shadow rounded-0">
+                    <input type="text" class="form-control form-control-lg border-0" id="addList" placeholder="What needs to be done?">
+                    <ul class="list-group list-group-flush">
+                    </ul>
+                    <div class="card-footer bg-white d-flex justify-content-between">
+                    	<div>
+                    		<span class="text-secondary">2 items left</span>
+                    	</div>
+                        <nav class="nav col-6">
+                            <a href="#" class="nav-link text-secondary">All</a>
+                            <a href="#" class="nav-link text-secondary">Active</a>
+                            <a href="#" class="nav-link text-secondary">Completed</a>
+                        </nav>
+                        <div>
+                        	<a href="#" class="text-secondary">Clear All</a>
+                        </div>
+                        
+                    </div>
+                </div>
+            </section>
+        </article>
+    </main>
+    <!-- jQuery -->
+    <script src="node_modules/jquery/dist/jquery.min.js"></script>
+    <!-- Bootstrap 4 -->
+    <script src="node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="js/all.js"></script>
+</body>
+
+</html>
