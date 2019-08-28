@@ -1,5 +1,9 @@
 .box-shadow {
-    box-shadow: 0 2px 5px #333;
+    box-shadow: 0 2px 5px #707377;
+}
+
+.text-shadow {
+	text-shadow: 0 2px 5px #707377;
 }
 
 .nav-link {
@@ -14,3 +18,17 @@
 .line-through {
     text-decoration: line-through;
 }
+
+.edit-line {
+	margin: 3px 0;
+	border: 1px solid #ced4da;
+	box-shadow : inset 0 -1px 5px #ced4da;
+}
+
+
+/* .edit-line:focus{
+	border-color: none;
+	box-shadow: none;
+	border-bottom: 1px solid #ced4da;
+} */
+input:focus{outline:none}

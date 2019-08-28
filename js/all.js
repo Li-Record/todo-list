@@ -1,42 +1,124 @@
 $(document).ready(function() {
     console.log('ready');
-    // 建立 list
+
+
+    // 要進行 刪除 修改
+
+    // 先建立一個 空陣列 準備來新增到資料庫
+    let listData = localStorage.getItem('list') || [];
+    if (typeof(listData) === 'string') {
+        listData = listData.split(',');
+    }
+
+    // 一進到網頁 就更新畫面
+    function updata() {
+        // 清空原先列表
+        $('.list-group').html('');
+        for (let i = 0; i < listData.length; i++) {
+            // 再新增
+            createList(listData[i], i);
+        }
+    }
+    updata();
+
+    // 建立 li
+    function createList(text, num) {
+        let createLi = document.createElement('li');
+        let createInput = document.createElement('input');
+        let createP = document.createElement('p');
+        let createBtn = document.createElement('button');
+
+        createLi.setAttribute('class', 'list-group-item');
+        createLi.setAttribute('data-num', num);
+        createLi.setAttribute('data-edit', 0);
+        createInput.setAttribute('class', 'mr-3');
+        createInput.setAttribute('type', 'checkbox');
+        createP.setAttribute('class', 'd-inline');
+        createP.textContent = text;
+        createBtn.setAttribute('class', 'close');
+        createBtn.setAttribute('type', 'button');
+        createBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
+
+        createLi.appendChild(createInput);
+        createLi.appendChild(createP);
+        createLi.appendChild(createBtn);
+        document.querySelector('.list-group').appendChild(createLi);
+    }
+
     $('#addList').keyup(function(e) {
         /* Act on the event */
         if (e.keyCode === 13) {
             let textValue = $(this).val();
-            let createLi = document.createElement('li');
-            let createInput = document.createElement('input');
-            let createP = document.createElement('p');
-            let createBtn = document.createElement('button');
-
-            createLi.setAttribute('class', 'list-group-item');
-            createInput.setAttribute('class', 'mr-3');
-            createInput.setAttribute('type', 'checkbox');
-            createP.setAttribute('class', 'd-inline');
-            createP.textContent = textValue;
-            createBtn.setAttribute('class', 'close');
-            createBtn.setAttribute('type', 'button');
-            createBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
-
-            createLi.appendChild(createInput);
-            createLi.appendChild(createP);
-            createLi.appendChild(createBtn);
-            document.querySelector('.list-group').appendChild(createLi);
+            if (textValue === '') { return };
+            listData.push(textValue);
+            localStorage.setItem('list', listData);
+            updata();
+            $(this).val('');
         }
     });
+
+    // 刪除
     $('.list-group').click(function(e) {
-    	/* Act on the event */
-    	let tagName = e.target.tagName;
-    	switch (tagName) {
-    		case 'SPAN':
-    			$(e.target).parent().parent().remove();
-    			break;
-    		case 'INPUT':
-    			$(e.target).next().toggleClass('line-through');
-    			break;
-    	}
+        /* Act on the event */
+        let tagName = e.target.tagName;
+        switch (tagName) {
+            case 'SPAN':
+                let num = $(e.target).parent().parent().data('num');
+                listData.splice(num, 1);
+                localStorage.setItem('list', listData);
+                updata();
+                break;
+            case 'INPUT':
+                $(e.target).next().toggleClass('line-through');
+                break;
+        }
     });
-    
+
+    function edit(who) {
+        let num = $(who).data('num');
+        // 加入 input value 是原本裡面的值
+        let str = `
+			<input type="text" class="edit-line w-100 p-2" value="${listData[num]}" data-num="${num}">
+        `
+        $(who).addClass('p-0');
+        $(who).attr('data-edit',1);
+        $(who).html(str);
+        // 讓游標保持最後，先清空，在貼上值
+        $(who).find('input').val('').focus().val(listData[num]);
+        // 修改完成後 enter 重新放入 localstorage
+        $(who).find('input').keyup(function(e) {
+            /* Act on the event */
+            if (e.keyCode === 13) {
+                let textValue = $(this).val();
+                if (textValue === '') { return };
+                listData[num] = textValue;
+                localStorage.setItem('list', listData);
+                updata();
+            } else if (e.keyCode === 27 ){
+            	updata();
+            }
+        });
+    }
+
+
+    // 修改
+    $('.list-group').dblclick(function(e) {
+        let tagName = e.target.tagName;
+        if (tagName !== 'LI' && tagName !== 'P') { return }
+        let edit = [];
+    	console.log($(this))
+        switch (tagName) {
+            case 'LI':
+                edit(e.target);
+                break;
+            case 'P':
+                let getLi = $(e.target).parent();
+                edit(getLi);
+                break;
+        }
+
+
+    })
+
 
 });
