@@ -2,7 +2,7 @@ $(document).ready(function() {
     console.log('ready');
 
 
-    // 要進行 刪除 修改
+    // 要進行修改
 
     // 先建立一個 空陣列 準備來新增到資料庫
     let listData = localStorage.getItem('list') || [];
@@ -11,7 +11,7 @@ $(document).ready(function() {
     }
 
     // 一進到網頁 就更新畫面
-    function updata() {
+    function update() {
         // 清空原先列表
         $('.list-group').html('');
         for (let i = 0; i < listData.length; i++) {
@@ -19,7 +19,7 @@ $(document).ready(function() {
             createList(listData[i], i);
         }
     }
-    updata();
+    update();
 
     // 建立 li
     function createList(text, num) {
@@ -45,6 +45,7 @@ $(document).ready(function() {
         document.querySelector('.list-group').appendChild(createLi);
     }
 
+    // 新增
     $('#addList').keyup(function(e) {
         /* Act on the event */
         if (e.keyCode === 13) {
@@ -52,7 +53,7 @@ $(document).ready(function() {
             if (textValue === '') { return };
             listData.push(textValue);
             localStorage.setItem('list', listData);
-            updata();
+            update();
             $(this).val('');
         }
     });
@@ -66,7 +67,7 @@ $(document).ready(function() {
                 let num = $(e.target).parent().parent().data('num');
                 listData.splice(num, 1);
                 localStorage.setItem('list', listData);
-                updata();
+                update();
                 break;
             case 'INPUT':
                 $(e.target).next().toggleClass('line-through');
@@ -74,6 +75,7 @@ $(document).ready(function() {
         }
     });
 
+    // 修改
     function edit(who) {
         let num = $(who).data('num');
         // 加入 input value 是原本裡面的值
@@ -93,15 +95,15 @@ $(document).ready(function() {
                 if (textValue === '') { return };
                 listData[num] = textValue;
                 localStorage.setItem('list', listData);
-                updata();
+                update();
             } else if (e.keyCode === 27 ){
-            	updata();
+            	update();
             }
         });
     }
 
 
-    // 修改
+    // 點兩下修改
     $('.list-group').dblclick(function(e) {
         let tagName = e.target.tagName;
         if (tagName !== 'LI' && tagName !== 'P') { return }
@@ -114,8 +116,6 @@ $(document).ready(function() {
                 edit(getLi);
                 break;
         }
-
-
     })
 
 
