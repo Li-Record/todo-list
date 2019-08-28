@@ -1,9 +1,6 @@
 $(document).ready(function() {
     console.log('ready');
 
-
-    // 要進行修改
-
     // 先建立一個 空陣列 準備來新增到資料庫
     let listData = localStorage.getItem('list') || [];
     if (typeof(listData) === 'string') {
@@ -30,7 +27,6 @@ $(document).ready(function() {
 
         createLi.setAttribute('class', 'list-group-item');
         createLi.setAttribute('data-num', num);
-        createLi.setAttribute('data-edit', 0);
         createInput.setAttribute('class', 'mr-3');
         createInput.setAttribute('type', 'checkbox');
         createP.setAttribute('class', 'd-inline');
@@ -75,7 +71,7 @@ $(document).ready(function() {
         }
     });
 
-    // 修改
+    // 修改 
     function edit(who) {
         let num = $(who).data('num');
         // 加入 input value 是原本裡面的值
@@ -83,7 +79,6 @@ $(document).ready(function() {
 			<input type="text" class="edit-line w-100 p-2" value="${listData[num]}" data-num="${num}">
         `
         $(who).addClass('p-0');
-        $(who).attr('data-edit',1);
         $(who).html(str);
         // 讓游標保持最後，先清空，在貼上值
         $(who).find('input').val('').focus().val(listData[num]);
@@ -97,16 +92,43 @@ $(document).ready(function() {
                 localStorage.setItem('list', listData);
                 update();
             } else if (e.keyCode === 27 ){
-            	update();
+            	
+            	cancelEdit(who,num);
             }
         });
     }
 
+    // 取消
+    function cancelEdit(who,num){
+    	$(who).removeClass('p-0');
+    	$(who).html('');
+        let createInput = document.createElement('input');
+        let createP = document.createElement('p');
+        let createBtn = document.createElement('button');
+
+        createInput.setAttribute('class', 'mr-3');
+        createInput.setAttribute('type', 'checkbox');
+        createP.setAttribute('class', 'd-inline');
+        createP.textContent = listData[num];
+        createBtn.setAttribute('class', 'close');
+        createBtn.setAttribute('type', 'button');
+        createBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
+
+        $(who).append(createInput);
+        $(who).append(createP);
+        $(who).append(createBtn);
+    }
 
     // 點兩下修改
     $('.list-group').dblclick(function(e) {
         let tagName = e.target.tagName;
-        if (tagName !== 'LI' && tagName !== 'P') { return }
+        if (tagName !== 'LI' && tagName !== 'P') { 
+        	return 
+        }else if ($(this).find('input[type=text]').hasClass('edit-line')){
+        	let who = $(this).find('input[type=text]').parent();
+        	let num = $(this).find('input[type=text]').data('num');
+        	cancelEdit(who,num);
+        }
         switch (tagName) {
             case 'LI':
                 edit(e.target);
