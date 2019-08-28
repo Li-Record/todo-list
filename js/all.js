@@ -105,8 +105,6 @@ $(document).ready(function() {
     $('.list-group').dblclick(function(e) {
         let tagName = e.target.tagName;
         if (tagName !== 'LI' && tagName !== 'P') { return }
-        let edit = [];
-    	console.log($(this))
         switch (tagName) {
             case 'LI':
                 edit(e.target);
