@@ -1,13 +1,10 @@
 $(document).ready(function() {
-    console.log('ready');
-
     // 先建立一個 空陣列 準備來新增到資料庫
     let listData = JSON.parse(localStorage.getItem('list')) || [];
 
     // 一進到網頁 就更新畫面
     function update() {
         localStorage.setItem('list', JSON.stringify(listData));
-        // 清空原先列表
         $('.list-group').html('');
         for (let i = 0; i < listData.length; i++) {
             createList(listData[i].title, i);
@@ -24,7 +21,34 @@ $(document).ready(function() {
     // 計算剩餘 list
     function countItems() {
         let getLen = listData.length;
-        $('#countItems').text(getLen + ' items left')
+        let checkbox = $('.list-group input[type=checkbox]');
+        let ary = [];
+        for (let i = 0; i < checkbox.length; i++) {
+            if (checkbox[i].checked) {
+                ary.push(i);
+            }
+        }
+        let len = getLen - ary.length;
+
+        $('#countItems').text(len + ' items left')
+    }
+
+    function active() {
+        for (let i = 0; i < listData.length; i++) {
+            if (listData[i].completed) {
+                let checkbox = $('.list-group input[type=checkbox]');
+                $(checkbox[i]).parent().addClass('d-none');
+            }
+        }
+    }
+
+    function completed() {
+        for (let i = 0; i < listData.length; i++) {
+            if (!listData[i].completed) {
+                let checkbox = $('.list-group input[type=checkbox]');
+                $(checkbox[i]).parent().addClass('d-none');
+            }
+        }
     }
 
     $('.nav-pills').click(function(e) {
@@ -33,27 +57,12 @@ $(document).ready(function() {
         $(e.target).addClass('active')
         switch (e.target.hash) {
             case '#active':
-                (function() {
-                    $('.list-group').html('');
-                    for (let i = 0; i < listData.length; i++) {
-                        if (!listData[i].completed) {
-                            createList(listData[i].title, i);
-                        }
-                    }
-                }())
+                update();
+                active();
                 break;
             case '#completed':
-                (function() {
-                    $('.list-group').html('');
-                    for (let i = 0; i < listData.length; i++) {
-                        if (listData[i].completed) {
-                            createList(listData[i].title, i);
-                            let checkbox = $('.list-group input[type=checkbox]');
-                            $(checkbox[i]).next().addClass('line-through');
-                            checkbox[i].checked = true;
-                        }
-                    }
-                }())
+                update();
+                completed();
                 break;
             default:
                 update();
@@ -100,16 +109,18 @@ $(document).ready(function() {
         }
     });
 
-    // 刪除
+    // 事件代理 監聽 close checkbox
     $('.list-group').click(function(e) {
         let tagName = e.target.tagName;
         switch (tagName) {
             case 'SPAN':
+                // 點擊叉叉 移除該項
                 let num = $(e.target).parent().parent().data('num');
                 listData.splice(num, 1);
                 update();
                 break;
             case 'INPUT':
+                // 點擊到 checkbox
                 $(e.target).next().toggleClass('line-through');
                 let checkbox = $('.list-group input[type=checkbox]');
                 for (let i = 0; i < checkbox.length; i++) {
@@ -119,7 +130,16 @@ $(document).ready(function() {
                         listData[i].completed = false;
                     }
                 }
-                localStorage.setItem('list', JSON.stringify(listData));
+
+                if (location.hash === '#active') {
+                    update();
+                    active();
+                } else if (location.hash === '#completed') {
+                    update();
+                    completed();
+                } else {
+                    update();
+                }
                 break;
         }
     });
@@ -167,6 +187,12 @@ $(document).ready(function() {
         $(who).append(createInput);
         $(who).append(createP);
         $(who).append(createBtn);
+
+        if (listData[num].completed) {
+            let checkbox = $('.list-group input[type=checkbox]');
+            $(checkbox[num]).next().addClass('line-through');
+            checkbox[num].checked = true;
+        }
     }
 
     // 點兩下修改
@@ -196,7 +222,4 @@ $(document).ready(function() {
         listData = [];
         update();
     });
-
-
-
 });
