@@ -15,8 +15,32 @@ $(document).ready(function() {
             // 再新增
             createList(listData[i], i);
         }
+        countItems();
     }
     update();
+
+    // 計算剩餘 list
+    function countItems() {
+        let getLen = listData.length;
+        $('#countItems').text(getLen + ' items left')
+    }
+
+    // 判斷 checkbox 
+    $('.list-group input[type=checkbox]').click(function(e) {
+    	let checkbox = $('.list-group input[type=checkbox]');
+    	for (let i =0 ;i<checkbox.length;i++){
+    		if(checkbox[i].checked === true){
+    			console.log(i);
+    		}
+    	}
+    	
+    });
+
+    $('.nav-pills').click(function(e) {
+    	$(this).find('a').removeClass('active');
+    	if( e.target.tagName !== 'A'){return}
+    		$(e.target).addClass('active')
+    });
 
     // 建立 li
     function createList(text, num) {
@@ -91,17 +115,17 @@ $(document).ready(function() {
                 listData[num] = textValue;
                 localStorage.setItem('list', listData);
                 update();
-            } else if (e.keyCode === 27 ){
-            	
-            	cancelEdit(who,num);
+            } else if (e.keyCode === 27) {
+
+                cancelEdit(who, num);
             }
         });
     }
 
     // 取消
-    function cancelEdit(who,num){
-    	$(who).removeClass('p-0');
-    	$(who).html('');
+    function cancelEdit(who, num) {
+        $(who).removeClass('p-0');
+        $(who).html('');
         let createInput = document.createElement('input');
         let createP = document.createElement('p');
         let createBtn = document.createElement('button');
@@ -122,12 +146,12 @@ $(document).ready(function() {
     // 點兩下修改
     $('.list-group').dblclick(function(e) {
         let tagName = e.target.tagName;
-        if (tagName !== 'LI' && tagName !== 'P') { 
-        	return 
-        }else if ($(this).find('input[type=text]').hasClass('edit-line')){
-        	let who = $(this).find('input[type=text]').parent();
-        	let num = $(this).find('input[type=text]').data('num');
-        	cancelEdit(who,num);
+        if (tagName !== 'LI' && tagName !== 'P') {
+            return
+        } else if ($(this).find('input[type=text]').hasClass('edit-line')) {
+            let who = $(this).find('input[type=text]').parent();
+            let num = $(this).find('input[type=text]').data('num');
+            cancelEdit(who, num);
         }
         switch (tagName) {
             case 'LI':
@@ -139,6 +163,17 @@ $(document).ready(function() {
                 break;
         }
     })
+
+    // 清除全部資料
+    $('#clearAll').click(function(e) {
+        /* Act on the event */
+
+        // 建立一個警告視窗
+        listData = [];
+        localStorage.setItem('list', listData);
+        update();
+    });
+
 
 
 });

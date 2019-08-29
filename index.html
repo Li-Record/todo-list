@@ -39,15 +39,21 @@
                     </ul>
                     <div class="card-footer bg-white d-flex justify-content-between">
                         <div>
-                            <span class="text-secondary">2 items left</span>
+                            <span class="text-secondary" id="countItems"></span>
                         </div>
-                        <nav class="nav col-6">
-                            <a href="#" class="nav-link text-secondary">All</a>
-                            <a href="#" class="nav-link text-secondary">Active</a>
-                            <a href="#" class="nav-link text-secondary">Completed</a>
-                        </nav>
+                        <ul class="nav nav-pills">
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary active" href="#">全部</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary" href="#">進行中</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-secondary" href="#">已完成</a>
+                            </li>
+                        </ul>
                         <div>
-                            <a href="#" class="text-secondary">Clear All</a>
+                            <a href="#" class="text-secondary" id="clearAll">Clear All</a>
                         </div>
                     </div>
                 </div>
@@ -56,10 +62,9 @@
     </main>
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+    <!-- Bootstrap 4 -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-    <!-- Bootstrap 4 -->
-    <script src="node_modules/bootstrap/dist/js/bootstrap.js"></script>
     <script src="js/all.js"></script>
 </body>
 
