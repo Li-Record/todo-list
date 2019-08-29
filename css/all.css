@@ -17,6 +17,7 @@
 
 .line-through {
     text-decoration: line-through;
+    color: #6c757d;
 }
 
 .edit-line {

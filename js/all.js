@@ -2,18 +2,20 @@ $(document).ready(function() {
     console.log('ready');
 
     // 先建立一個 空陣列 準備來新增到資料庫
-    let listData = localStorage.getItem('list') || [];
-    if (typeof(listData) === 'string') {
-        listData = listData.split(',');
-    }
+    let listData = JSON.parse(localStorage.getItem('list')) || [];
 
     // 一進到網頁 就更新畫面
     function update() {
+        localStorage.setItem('list', JSON.stringify(listData));
         // 清空原先列表
         $('.list-group').html('');
         for (let i = 0; i < listData.length; i++) {
-            // 再新增
-            createList(listData[i], i);
+            createList(listData[i].title, i);
+            if (listData[i].completed) {
+                let checkbox = $('.list-group input[type=checkbox]');
+                $(checkbox[i]).next().addClass('line-through');
+                checkbox[i].checked = true;
+            }
         }
         countItems();
     }
@@ -25,21 +27,38 @@ $(document).ready(function() {
         $('#countItems').text(getLen + ' items left')
     }
 
-    // 判斷 checkbox 
-    $('.list-group input[type=checkbox]').click(function(e) {
-    	let checkbox = $('.list-group input[type=checkbox]');
-    	for (let i =0 ;i<checkbox.length;i++){
-    		if(checkbox[i].checked === true){
-    			console.log(i);
-    		}
-    	}
-    	
-    });
-
     $('.nav-pills').click(function(e) {
-    	$(this).find('a').removeClass('active');
-    	if( e.target.tagName !== 'A'){return}
-    		$(e.target).addClass('active')
+        $(this).find('a').removeClass('active');
+        if (e.target.tagName !== 'A') { return }
+        $(e.target).addClass('active')
+        switch (e.target.hash) {
+            case '#active':
+                (function() {
+                    $('.list-group').html('');
+                    for (let i = 0; i < listData.length; i++) {
+                        if (!listData[i].completed) {
+                            createList(listData[i].title, i);
+                        }
+                    }
+                }())
+                break;
+            case '#completed':
+                (function() {
+                    $('.list-group').html('');
+                    for (let i = 0; i < listData.length; i++) {
+                        if (listData[i].completed) {
+                            createList(listData[i].title, i);
+                            let checkbox = $('.list-group input[type=checkbox]');
+                            $(checkbox[i]).next().addClass('line-through');
+                            checkbox[i].checked = true;
+                        }
+                    }
+                }())
+                break;
+            default:
+                update();
+                break;
+        }
     });
 
     // 建立 li
@@ -67,12 +86,15 @@ $(document).ready(function() {
 
     // 新增
     $('#addList').keyup(function(e) {
-        /* Act on the event */
+
         if (e.keyCode === 13) {
             let textValue = $(this).val();
             if (textValue === '') { return };
-            listData.push(textValue);
-            localStorage.setItem('list', listData);
+
+            let items = {};
+            items.title = textValue;
+            items.completed = false;
+            listData.push(items);
             update();
             $(this).val('');
         }
@@ -80,17 +102,24 @@ $(document).ready(function() {
 
     // 刪除
     $('.list-group').click(function(e) {
-        /* Act on the event */
         let tagName = e.target.tagName;
         switch (tagName) {
             case 'SPAN':
                 let num = $(e.target).parent().parent().data('num');
                 listData.splice(num, 1);
-                localStorage.setItem('list', listData);
                 update();
                 break;
             case 'INPUT':
                 $(e.target).next().toggleClass('line-through');
+                let checkbox = $('.list-group input[type=checkbox]');
+                for (let i = 0; i < checkbox.length; i++) {
+                    if (checkbox[i].checked) {
+                        listData[i].completed = true;
+                    } else {
+                        listData[i].completed = false;
+                    }
+                }
+                localStorage.setItem('list', JSON.stringify(listData));
                 break;
         }
     });
@@ -100,23 +129,20 @@ $(document).ready(function() {
         let num = $(who).data('num');
         // 加入 input value 是原本裡面的值
         let str = `
-			<input type="text" class="edit-line w-100 p-2" value="${listData[num]}" data-num="${num}">
+			<input type="text" class="edit-line w-100 p-2" value="" data-num="${num}">
         `
         $(who).addClass('p-0');
         $(who).html(str);
         // 讓游標保持最後，先清空，在貼上值
-        $(who).find('input').val('').focus().val(listData[num]);
+        $(who).find('input').val('').focus().val(listData[num].title);
         // 修改完成後 enter 重新放入 localstorage
         $(who).find('input').keyup(function(e) {
-            /* Act on the event */
             if (e.keyCode === 13) {
                 let textValue = $(this).val();
                 if (textValue === '') { return };
-                listData[num] = textValue;
-                localStorage.setItem('list', listData);
+                listData[num].title = textValue;
                 update();
             } else if (e.keyCode === 27) {
-
                 cancelEdit(who, num);
             }
         });
@@ -133,7 +159,7 @@ $(document).ready(function() {
         createInput.setAttribute('class', 'mr-3');
         createInput.setAttribute('type', 'checkbox');
         createP.setAttribute('class', 'd-inline');
-        createP.textContent = listData[num];
+        createP.textContent = listData[num].title;
         createBtn.setAttribute('class', 'close');
         createBtn.setAttribute('type', 'button');
         createBtn.innerHTML = '<span aria-hidden="true">&times;</span>';
@@ -166,11 +192,8 @@ $(document).ready(function() {
 
     // 清除全部資料
     $('#clearAll').click(function(e) {
-        /* Act on the event */
-
         // 建立一個警告視窗
         listData = [];
-        localStorage.setItem('list', listData);
         update();
     });
 
