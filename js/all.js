@@ -51,24 +51,18 @@ $(document).ready(function() {
         }
     }
 
-    $('.nav-pills').click(function(e) {
-        $(this).find('a').removeClass('active');
-        if (e.target.tagName !== 'A') { return }
-        $(e.target).addClass('active')
-        switch (e.target.hash) {
-            case '#active':
-                update();
-                active();
-                break;
-            case '#completed':
-                update();
-                completed();
-                break;
-            default:
-                update();
-                break;
+    // 判斷目前 hash 
+    function nowHash() {
+        if (location.hash === '#active') {
+            update();
+            active();
+        } else if (location.hash === '#completed') {
+            update();
+            completed();
+        } else {
+            update();
         }
-    });
+    }
 
     // 建立 li
     function createList(text, num) {
@@ -102,22 +96,29 @@ $(document).ready(function() {
             items.title = textValue;
             items.completed = false;
             listData.push(items);
-            update();
+            nowHash();
             $(this).val('');
         }
     });
 
-    function nowHash() {
-        if (location.hash === '#active') {
-            update();
-            active();
-        } else if (location.hash === '#completed') {
-            update();
-            completed();
-        } else {
-            update();
+    $('.nav-pills').click(function(e) {
+        $(this).find('a').removeClass('active');
+        if (e.target.tagName !== 'A') { return }
+        $(e.target).addClass('active')
+        switch (e.target.hash) {
+            case '#active':
+                update();
+                active();
+                break;
+            case '#completed':
+                update();
+                completed();
+                break;
+            default:
+                update();
+                break;
         }
-    }
+    });
 
     // 事件代理 監聽 close checkbox
     $('.list-group').click(function(e) {
