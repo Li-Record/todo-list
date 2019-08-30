@@ -22,13 +22,13 @@ $(document).ready(function() {
     function countItems() {
         let getLen = listData.length;
         let checkbox = $('.list-group input[type=checkbox]');
-        let ary = [];
+        let completedAry = [];
         for (let i = 0; i < checkbox.length; i++) {
             if (checkbox[i].checked) {
-                ary.push(i);
+                completedAry.push(i);
             }
         }
-        let len = getLen - ary.length;
+        let len = getLen - completedAry.length;
 
         $('#countItems').text(len + ' items left')
     }
@@ -72,10 +72,10 @@ $(document).ready(function() {
 
     // 建立 li
     function createList(text, num) {
-        let createLi = document.createElement('li');
-        let createInput = document.createElement('input');
-        let createP = document.createElement('p');
-        let createBtn = document.createElement('button');
+        const createLi = document.createElement('li');
+        const createInput = document.createElement('input');
+        const createP = document.createElement('p');
+        const createBtn = document.createElement('button');
 
         createLi.setAttribute('class', 'list-group-item');
         createLi.setAttribute('data-num', num);
@@ -95,11 +95,9 @@ $(document).ready(function() {
 
     // 新增
     $('#addList').keyup(function(e) {
-
         if (e.keyCode === 13) {
             let textValue = $(this).val();
             if (textValue === '') { return };
-
             let items = {};
             items.title = textValue;
             items.completed = false;
@@ -109,6 +107,18 @@ $(document).ready(function() {
         }
     });
 
+    function nowHash() {
+        if (location.hash === '#active') {
+            update();
+            active();
+        } else if (location.hash === '#completed') {
+            update();
+            completed();
+        } else {
+            update();
+        }
+    }
+
     // 事件代理 監聽 close checkbox
     $('.list-group').click(function(e) {
         let tagName = e.target.tagName;
@@ -117,7 +127,7 @@ $(document).ready(function() {
                 // 點擊叉叉 移除該項
                 let num = $(e.target).parent().parent().data('num');
                 listData.splice(num, 1);
-                update();
+                nowHash();
                 break;
             case 'INPUT':
                 // 點擊到 checkbox
@@ -130,16 +140,7 @@ $(document).ready(function() {
                         listData[i].completed = false;
                     }
                 }
-
-                if (location.hash === '#active') {
-                    update();
-                    active();
-                } else if (location.hash === '#completed') {
-                    update();
-                    completed();
-                } else {
-                    update();
-                }
+                nowHash();
                 break;
         }
     });
@@ -149,7 +150,7 @@ $(document).ready(function() {
         let num = $(who).data('num');
         // 加入 input value 是原本裡面的值
         let str = `
-			<input type="text" class="edit-line w-100 p-2" value="" data-num="${num}">
+			<input type="text" class="edit-line w-100 p-2" data-num="${num}">
         `
         $(who).addClass('p-0');
         $(who).html(str);
@@ -161,7 +162,7 @@ $(document).ready(function() {
                 let textValue = $(this).val();
                 if (textValue === '') { return };
                 listData[num].title = textValue;
-                update();
+                nowHash();
             } else if (e.keyCode === 27) {
                 cancelEdit(who, num);
             }
@@ -172,9 +173,9 @@ $(document).ready(function() {
     function cancelEdit(who, num) {
         $(who).removeClass('p-0');
         $(who).html('');
-        let createInput = document.createElement('input');
-        let createP = document.createElement('p');
-        let createBtn = document.createElement('button');
+        const createInput = document.createElement('input');
+        const createP = document.createElement('p');
+        const createBtn = document.createElement('button');
 
         createInput.setAttribute('class', 'mr-3');
         createInput.setAttribute('type', 'checkbox');
